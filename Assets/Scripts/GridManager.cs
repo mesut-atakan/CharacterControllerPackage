@@ -10,7 +10,7 @@ public class GridManager : MonoBehaviour
     [Space(10f)]
     [SerializeField] private bool drawGizmos = true;
     
-    [SerializeField] Vector2[] grids;
+    [SerializeField] GridNode[] grids;
     #endregion <<<< XXX >>>>
 
     private void Awake()
@@ -28,27 +28,47 @@ public class GridManager : MonoBehaviour
     {
         if (this.drawGizmos && grids != null)
         {
-            foreach (Vector2 _grid in this.grids)
+            foreach (GridNode _grid in this.grids)
             {
                 Gizmos.color = Grid.GetGizmosColor;
-                Gizmos.DrawWireCube(new Vector3(_grid.x, 0, _grid.y), new Vector3(Grid.GetGizmosSize, Grid.GetGizmosSize, Grid.GetGizmosSize));
+                Gizmos.DrawWireCube(new Vector3(_grid.GridPos.x, 0, _grid.GridPos.y), new Vector3(Grid.GetGizmosSize, Grid.GetGizmosSize, Grid.GetGizmosSize));
             }
         }
     }
+
+
+
+
+    public GridNode FindGridNodeForVector(Vector3 playerPosition)
+    {
+        int gridX = Mathf.FloorToInt(playerPosition.x / Grid.GetGridDistance);
+        int gridY = Mathf.FloorToInt(playerPosition.z / Grid.GetGridDistance);
+
+        if (gridX >= 0 && gridX < Grid.GetGridAmount.x && gridY >= 0 && gridY < Grid.GetGridAmount.y)
+        {
+            int index = gridY * (int)Grid.GetGridAmount.x + gridX;
+            return grids[index];
+        }
+        return null;
+    }
+
+
+
+
 
     private void CreateGrid()
     {
         int _gridAmountX = (int)Grid.GetGridAmount.x;
         int _gridAmountY = (int)Grid.GetGridAmount.y;
         float _distance = Grid.GetGridDistance;
-        grids = new Vector2[_gridAmountX * _gridAmountY];
+        grids = new GridNode[_gridAmountX * _gridAmountY];
         int _index = 0;
 
         for (int x = 0; x < _gridAmountX; x++)
         {
             for (int y = 0; y < _gridAmountY; y++)
             {
-                grids[_index] = new Vector2(x * _distance, y * _distance);
+                grids[_index].GridPos = new Vector2(x * _distance, y * _distance);
                 _index++;
             }
         }
