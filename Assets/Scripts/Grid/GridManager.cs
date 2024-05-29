@@ -30,7 +30,10 @@ public class GridManager : MonoBehaviour
         {
             foreach (GridNode _grid in this.grids)
             {
-                Gizmos.color = Grid.GetGizmosColor;
+                if (_grid.GridIsActive)
+                    Gizmos.color = Grid.GetGizmosColor;
+                else
+                    Gizmos.color = Color.yellow;
                 Gizmos.DrawWireCube(new Vector3(_grid.GridPos.x, 0, _grid.GridPos.y), new Vector3(Grid.GetGizmosSize, Grid.GetGizmosSize, Grid.GetGizmosSize));
             }
         }
@@ -38,17 +41,30 @@ public class GridManager : MonoBehaviour
 
 
 
-
+    /// <summary>
+    /// Bu fonksiyon ile birlikte aradýðýnýz konumdaki gridi çekebilirsiniz!
+    /// </summary>
+    /// <param name="playerPosition">Hangi konumu aradýðýnýzý giriniz!</param>
+    /// <returns>Geriye grid döndürülecek!</returns>
     public GridNode FindGridNodeForVector(Vector3 playerPosition)
     {
+#if UNITY_EDITOR
+        UnityEngine.Profiling.Profiler.BeginSample("FindGrid");
+#endif
+        int gridZ = Mathf.FloorToInt(playerPosition.z / Grid.GetGridDistance);
         int gridX = Mathf.FloorToInt(playerPosition.x / Grid.GetGridDistance);
-        int gridY = Mathf.FloorToInt(playerPosition.z / Grid.GetGridDistance);
 
-        if (gridX >= 0 && gridX < Grid.GetGridAmount.x && gridY >= 0 && gridY < Grid.GetGridAmount.y)
+        if (gridZ >= 0 && gridZ < Grid.GetGridAmount.x && gridZ >= 0 && gridZ < Grid.GetGridAmount.y)
         {
-            int index = gridY * (int)Grid.GetGridAmount.x + gridX;
+            int index = gridZ * (int)Grid.GetGridAmount.x + gridZ;
+#if UNITY_EDITOR
+            UnityEngine.Profiling.Profiler.EndSample();
+#endif
             return grids[index];
         }
+#if UNITY_EDITOR
+        UnityEngine.Profiling.Profiler.EndSample();
+#endif
         return null;
     }
 
@@ -68,9 +84,15 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < _gridAmountY; y++)
             {
-                grids[_index].GridPos = new Vector2(x * _distance, y * _distance);
+                Vector2 position = new Vector2(x * _distance, y * _distance);
+                grids[_index] = new GridNode
+                {
+                    GridPos = position,
+                    GridIsActive = true
+                };
                 _index++;
             }
         }
     }
+
 }
