@@ -72,8 +72,10 @@ public class GridManager : MonoBehaviour
 
 
 
-    private void CreateGrid()
+    public void CreateGrid()
     {
+        Grid.SetGridValues(this.gridProperties.GridAmount, this.gridProperties.GridDistance, this.gridProperties.GizmosColor, this.gridProperties.GizmosSize);
+
         int _gridAmountX = (int)Grid.GetGridAmount.x;
         int _gridAmountY = (int)Grid.GetGridAmount.y;
         float _distance = Grid.GetGridDistance;
@@ -93,6 +95,15 @@ public class GridManager : MonoBehaviour
                 _index++;
             }
         }
+    }
+
+
+    /// <summary>
+    /// Bu fonksiyon ile oluþturduðunuz gridleri temizleyebilirsiniz!
+    /// </summary>
+    public void ClearGrid()
+    {
+        this.grids = null;
     }
 
 }
