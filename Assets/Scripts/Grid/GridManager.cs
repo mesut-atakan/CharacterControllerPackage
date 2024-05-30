@@ -51,12 +51,12 @@ public class GridManager : MonoBehaviour
 #if UNITY_EDITOR
         UnityEngine.Profiling.Profiler.BeginSample("FindGrid");
 #endif
-        int gridZ = Mathf.FloorToInt(playerPosition.z / Grid.GetGridDistance);
-        int gridX = Mathf.FloorToInt(playerPosition.x / Grid.GetGridDistance);
+        int gridX = Mathf.FloorToInt(playerPosition.z / Grid.GetGridDistance);
+        int gridY = Mathf.FloorToInt(playerPosition.x / Grid.GetGridDistance);
 
-        if (gridZ >= 0 && gridZ < Grid.GetGridAmount.x && gridZ >= 0 && gridZ < Grid.GetGridAmount.y)
+        if (gridX >= 0 && gridX < Grid.GetGridAmount.x && gridY >= 0 && gridY < Grid.GetGridAmount.y)
         {
-            int index = gridZ * (int)Grid.GetGridAmount.x + gridZ;
+            int index = gridY * (int)Grid.GetGridAmount.x + gridX;
 #if UNITY_EDITOR
             UnityEngine.Profiling.Profiler.EndSample();
 #endif
