@@ -9,18 +9,23 @@ public class GridManager : MonoBehaviour
 
     [Space(10f)]
     [SerializeField] private bool drawGizmos = true;
-    
     [SerializeField] GridNode[] grids;
+
+    [Header("Objects")]
+    [SerializeField] private GameObject planeObject;
+
+    [Header("Classes")]
+    [SerializeField] private GameManager gameManager;
     #endregion <<<< XXX >>>>
 
     private void Awake()
     {
-        Grid.SetGridValues(this.gridProperties.GridAmount, this.gridProperties.GridDistance, this.gridProperties.GizmosColor, this.gridProperties.GizmosSize);
+        Grid.Instance.SetGridValues(this.gridProperties.GridAmount, this.gridProperties.GridDistance, this.gridProperties.GizmosColor, this.gridProperties.GizmosSize);
     }
 
     private void Start()
     {
-        Grid.DataDebug();
+        Grid.Instance.DataDebug();
         CreateGrid();
     }
 
@@ -31,10 +36,10 @@ public class GridManager : MonoBehaviour
             foreach (GridNode _grid in this.grids)
             {
                 if (_grid.GridIsActive)
-                    Gizmos.color = Grid.GetGizmosColor;
+                    Gizmos.color = Grid.Instance.GetGizmosColor;
                 else
                     Gizmos.color = Color.yellow;
-                Gizmos.DrawWireCube(new Vector3(_grid.GridPos.x, 0, _grid.GridPos.y), new Vector3(Grid.GetGizmosSize, Grid.GetGizmosSize, Grid.GetGizmosSize));
+                Gizmos.DrawWireCube(new Vector3(_grid.GridPos.x, 0, _grid.GridPos.y), new Vector3(Grid.Instance.GetGizmosSize, Grid.Instance.GetGizmosSize, Grid.Instance.GetGizmosSize));
             }
         }
     }
@@ -51,12 +56,12 @@ public class GridManager : MonoBehaviour
 #if UNITY_EDITOR
         UnityEngine.Profiling.Profiler.BeginSample("FindGrid");
 #endif
-        int gridX = Mathf.FloorToInt(playerPosition.z / Grid.GetGridDistance);
-        int gridY = Mathf.FloorToInt(playerPosition.x / Grid.GetGridDistance);
+        int gridX = Mathf.FloorToInt(playerPosition.z / Grid.Instance.GetGridDistance);
+        int gridY = Mathf.FloorToInt(playerPosition.x / Grid.Instance.GetGridDistance);
 
-        if (gridX >= 0 && gridX < Grid.GetGridAmount.x && gridY >= 0 && gridY < Grid.GetGridAmount.y)
+        if (gridX >= 0 && gridX < Grid.Instance.GetGridAmount.x && gridY >= 0 && gridY < Grid.Instance.GetGridAmount.y)
         {
-            int index = gridY * (int)Grid.GetGridAmount.x + gridX;
+            int index = gridY * (int)Grid.Instance.GetGridAmount.x + gridX;
 #if UNITY_EDITOR
             UnityEngine.Profiling.Profiler.EndSample();
 #endif
@@ -71,14 +76,15 @@ public class GridManager : MonoBehaviour
 
 
 
-
+    /// <summary>
+    /// Bu fonksiyon ile grid oluþturabilirsiniz!
+    /// </summary>
     public void CreateGrid()
     {
-        Grid.SetGridValues(this.gridProperties.GridAmount, this.gridProperties.GridDistance, this.gridProperties.GizmosColor, this.gridProperties.GizmosSize);
-
-        int _gridAmountX = (int)Grid.GetGridAmount.x;
-        int _gridAmountY = (int)Grid.GetGridAmount.y;
-        float _distance = Grid.GetGridDistance;
+        Grid.Instance.SetGridValues(this.gridProperties.GridAmount, this.gridProperties.GridDistance, this.gridProperties.GizmosColor, this.gridProperties.GizmosSize);
+        int _gridAmountX = (int)Grid.Instance.GetGridAmount.x;
+        int _gridAmountY = (int)Grid.Instance.GetGridAmount.y;
+        float _distance = Grid.Instance.GetGridDistance;
         grids = new GridNode[_gridAmountX * _gridAmountY];
         int _index = 0;
 
@@ -95,6 +101,11 @@ public class GridManager : MonoBehaviour
                 _index++;
             }
         }
+        AlignPlaneWithGrid();
+
+#if UNITY_EDITOR
+        CameraController.ChangeCameraPos(GridCenterPos(), 12);
+#endif
     }
 
 
@@ -106,4 +117,39 @@ public class GridManager : MonoBehaviour
         this.grids = null;
     }
 
+
+
+
+
+
+
+
+    /// <summary>
+    /// Bu fonksiyon ile birlikte grid objesinin konumunu tam olarak hizlayabilirsiniz!
+    /// </summary>
+    private void AlignPlaneWithGrid()
+    {
+        if (planeObject == null) return;
+
+        // Gridin toplam geniþliði ve yüksekliði
+        float totalWidth = Grid.Instance.GetGridAmount.x * Grid.Instance.GetGridDistance;
+        float totalHeight = Grid.Instance.GetGridAmount.y * Grid.Instance.GetGridDistance;
+
+        // Plane objesinin pozisyonu ve ölçeði
+        planeObject.transform.position = new Vector3(totalWidth / 2, 0, totalHeight / 2);
+        planeObject.transform.localScale = new Vector3(totalWidth / 10, 1, totalHeight / 10);
+    }
+
+
+    /// <summary>
+    /// Bu fonksiyon ile birlikte Gridin tam orta noktasýný çekebilirsiniz!
+    /// </summary>
+    /// <returns>Gridin tam olarak orta noktasý geri dönderilecektir!</returns>
+    private Vector3 GridCenterPos()
+    {
+        float totalWidth = Grid.Instance.GetGridAmount.x * Grid.Instance.GetGridDistance;
+        float totalHeight = Grid.Instance.GetGridAmount.y * Grid.Instance.GetGridDistance;
+
+        return new Vector3(totalWidth / 2.0f, 0, totalHeight / 2);
+    }
 }

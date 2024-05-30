@@ -10,10 +10,10 @@ public sealed class Grid
 
     #region <<<< Properties >>>>
 
-    internal static Vector2 GetGridAmount => gridAmount;
-    internal static float GetGridDistance => gridDistance;
-    internal static Color GetGizmosColor => gizmosColor;
-    internal static float GetGizmosSize => gizmosSize;
+    internal Vector2 GetGridAmount => gridAmount;
+    internal float GetGridDistance => gridDistance;
+    internal Color GetGizmosColor => gizmosColor;
+    internal float GetGizmosSize => gizmosSize;
 
     #endregion <<<< Properties >>>>
 
@@ -34,7 +34,7 @@ public sealed class Grid
     /// <param name="GridDistance">The distance between grid cells.</param>
     /// <param name="GizmosSize">The size of the gizmos drawn in the scene.</param>
     /// <param name="GizmosColor">The color of the gizmos drawn in the scene.</param>
-    public static void SetGridValues(Vector2 GridAmount, float GridDistance, Color GizmosColor, float GizmosSize)
+    public void SetGridValues(Vector2 GridAmount, float GridDistance, Color GizmosColor, float GizmosSize)
     {
         gridAmount = GridAmount;
         gridDistance = GridDistance;
@@ -45,7 +45,7 @@ public sealed class Grid
     /// <summary>
     /// Logs the grid data to the console.
     /// </summary>
-    public static void DataDebug()
+    public void DataDebug()
     {
         Debug.Log($"GridAmount: {gridAmount}\nGridDistance: {gridDistance}\nGizmosColor: {gizmosColor}\nGizmosSize: {gizmosSize}");
     }
