@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -36,10 +35,15 @@ public class GridManager : MonoBehaviour
             foreach (GridNode _grid in this.grids)
             {
                 if (_grid.GridIsActive)
+                {
                     Gizmos.color = Grid.Instance.GetGizmosColor;
+                    Gizmos.DrawWireCube(new Vector3(_grid.GridPos.x, 0, _grid.GridPos.y), new Vector3(Grid.Instance.GetGizmosSize, Grid.Instance.GetGizmosSize, Grid.Instance.GetGizmosSize));
+                }
                 else
+                {
                     Gizmos.color = Color.yellow;
-                Gizmos.DrawWireCube(new Vector3(_grid.GridPos.x, 0, _grid.GridPos.y), new Vector3(Grid.Instance.GetGizmosSize, Grid.Instance.GetGizmosSize, Grid.Instance.GetGizmosSize));
+                    Gizmos.DrawWireSphere(new Vector3(_grid.GridPos.x, 0, _grid.GridPos.y), Grid.Instance.GetGizmosSize / 2);
+                }
             }
         }
     }
@@ -74,6 +78,46 @@ public class GridManager : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Bu fonksiyon ile birlikte aradýðýnýz Gridin dizideki index numarasýný çebirebilirsiniz!
+    /// </summary>
+    /// <param name="pos">Aramak istediðiniz gridNode nun pozisyonunu girniz!</param>
+    /// <returns>Grid nodenin pzoisyonuna ait olan grid node nin index numarasý geri dönderilecek!</returns>
+    public int FindGridNodeIndex(Vector3 pos)
+    {
+        GridNode _gridNode;
+        int _index = 0;
+
+        _gridNode = FindGridNodeForVector(pos);
+        foreach(GridNode _grid in this.grids)
+        {
+            if (_gridNode == _grid) return _index;
+            _index++;
+            continue;
+        }
+
+        return -1;
+    }
+
+    /// <summary>
+    /// Bu fonksiyon ile Grid Nodenizi parametre olarak girerek bu gridin dizide hangi index de yer aldýðýný çevirebilirsiniz!
+    /// </summary>
+    /// <param name="gridNode">Aradýðýnýz GridNode sýnýfýný parametre olarak giriniz!</param>
+    /// <returns>Aradýðýnýz sýnýfýn index numarasý geri dönderilir. Eðer index numarasý bulunamazsa -1 deðere geri çevrilir!</returns>
+    public int FindGridNodeIndex(GridNode gridNode)
+    {
+        int _index = 0;
+
+        foreach (GridNode _grid in this.grids)
+        {
+            if (_grid == gridNode) return _index;
+            _index++;
+            continue;
+        }
+        return -1;
+    }
+
+
 
 
     /// <summary>
@@ -104,7 +148,7 @@ public class GridManager : MonoBehaviour
         AlignPlaneWithGrid();
 
 #if UNITY_EDITOR
-        CameraController.ChangeCameraPos(GridCenterPos(), 12);
+        CameraController.ChangeCameraPos(GridCenterPos(), 20);
 #endif
     }
 
