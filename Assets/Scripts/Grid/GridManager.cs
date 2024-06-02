@@ -1,9 +1,9 @@
-using Unity.VisualScripting;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
-    #region <<<< Serialize Fiedls >>>>
+    #region <<<< Serialize Fields >>>>
     [SerializeField] GridProperties gridProperties;
 
     [Space(10f)]
@@ -15,7 +15,10 @@ public class GridManager : MonoBehaviour
 
     [Header("Classes")]
     [SerializeField] private GameManager gameManager;
-    #endregion <<<< XXX >>>>
+
+    [Header("Settings")]
+    [SerializeField] private float rotationSpeed = 5f;
+    #endregion <<<< Serialize Fields >>>>
 
     private void Awake()
     {
@@ -48,20 +51,13 @@ public class GridManager : MonoBehaviour
         }
     }
 
-
-
-    /// <summary>
-    /// Bu fonksiyon ile birlikte aradýðýnýz konumdaki gridi çekebilirsiniz!
-    /// </summary>
-    /// <param name="playerPosition">Hangi konumu aradýðýnýzý giriniz!</param>
-    /// <returns>Geriye grid döndürülecek!</returns>
-    public GridNode FindGridNodeForVector(Vector3 playerPosition)
+    public GridNode FindGridNodeForVector(Vector3 position)
     {
 #if UNITY_EDITOR
         UnityEngine.Profiling.Profiler.BeginSample("FindGrid");
 #endif
-        int gridX = Mathf.FloorToInt(playerPosition.z / Grid.Instance.GetGridDistance);
-        int gridY = Mathf.FloorToInt(playerPosition.x / Grid.Instance.GetGridDistance);
+        int gridX = Mathf.FloorToInt(position.z / Grid.Instance.GetGridDistance);
+        int gridY = Mathf.FloorToInt(position.x / Grid.Instance.GetGridDistance);
 
         if (gridX >= 0 && gridX < Grid.Instance.GetGridAmount.x && gridY >= 0 && gridY < Grid.Instance.GetGridAmount.y)
         {
@@ -77,52 +73,200 @@ public class GridManager : MonoBehaviour
         return null;
     }
 
-
-    /// <summary>
-    /// Bu fonksiyon ile birlikte aradýðýnýz Gridin dizideki index numarasýný çebirebilirsiniz!
-    /// </summary>
-    /// <param name="pos">Aramak istediðiniz gridNode nun pozisyonunu girniz!</param>
-    /// <returns>Grid nodenin pzoisyonuna ait olan grid node nin index numarasý geri dönderilecek!</returns>
-    public int FindGridNodeIndex(Vector3 pos)
+    public GridNode FindNearestGridNode(Vector3 position)
     {
-        GridNode _gridNode;
-        int _index = 0;
+        GridNode nearestNode = null;
+        float nearestDistance = float.MaxValue;
 
-        _gridNode = FindGridNodeForVector(pos);
-        foreach(GridNode _grid in this.grids)
+        foreach (var node in grids)
         {
-            if (_gridNode == _grid) return _index;
-            _index++;
-            continue;
+            float distance = Vector3.Distance(new Vector3(node.GridPos.x, 0, node.GridPos.y), position);
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestNode = node;
+            }
         }
 
-        return -1;
+        return nearestNode;
     }
 
-    /// <summary>
-    /// Bu fonksiyon ile Grid Nodenizi parametre olarak girerek bu gridin dizide hangi index de yer aldýðýný çevirebilirsiniz!
-    /// </summary>
-    /// <param name="gridNode">Aradýðýnýz GridNode sýnýfýný parametre olarak giriniz!</param>
-    /// <returns>Aradýðýnýz sýnýfýn index numarasý geri dönderilir. Eðer index numarasý bulunamazsa -1 deðere geri çevrilir!</returns>
-    public int FindGridNodeIndex(GridNode gridNode)
+    public List<GridNode> GetNeighbours(GridNode node)
     {
-        int _index = 0;
+        List<GridNode> neighbours = new List<GridNode>();
 
-        foreach (GridNode _grid in this.grids)
+        Vector2[] directions = {
+        new Vector2(0, 1), // Up
+        new Vector2(1, 0), // Right
+        new Vector2(0, -1), // Down
+        new Vector2(-1, 0), // Left
+        new Vector2(1, 1), // ForwardRight
+        new Vector2(-1, 1), // ForwardLeft
+        new Vector2(1, -1), // BackwardRight
+        new Vector2(-1, -1) // BackwardLeft
+    };
+
+        foreach (var direction in directions)
         {
-            if (_grid == gridNode) return _index;
-            _index++;
-            continue;
+            Vector2 neighbourPos = node.GridPos + direction * Grid.Instance.GetGridDistance;
+            GridNode neighbourNode = FindGridNodeForVector(new Vector3(neighbourPos.x, 0, neighbourPos.y));
+            if (neighbourNode != null && neighbourNode.GridIsActive)
+            {
+                neighbours.Add(neighbourNode);
+            }
         }
-        return -1;
+
+        return neighbours;
+    }
+
+    public List<GridNode> FindPathToTarget(GridNode startNode, GridNode targetNode)
+    {
+        List<GridNode> path = new List<GridNode>();
+        HashSet<GridNode> closedSet = new HashSet<GridNode>();
+        List<GridNode> openSet = new List<GridNode> { startNode };
+
+        while (openSet.Count > 0)
+        {
+            GridNode currentNode = openSet[0];
+            for (int i = 1; i < openSet.Count; i++)
+            {
+                if (openSet[i].FCost < currentNode.FCost || openSet[i].FCost == currentNode.FCost && openSet[i].HCost < currentNode.HCost)
+                {
+                    currentNode = openSet[i];
+                }
+            }
+
+            openSet.Remove(currentNode);
+            closedSet.Add(currentNode);
+
+            if (currentNode == targetNode)
+            {
+                path = RetracePath(startNode, targetNode);
+                break;
+            }
+
+            foreach (GridNode neighbour in GetNeighbours(currentNode))
+            {
+                if (closedSet.Contains(neighbour))
+                {
+                    continue;
+                }
+
+                int newCostToNeighbour = currentNode.GCost + GetDistance(currentNode, neighbour);
+                if (newCostToNeighbour < neighbour.GCost || !openSet.Contains(neighbour))
+                {
+                    neighbour.GCost = newCostToNeighbour;
+                    neighbour.HCost = GetDistance(neighbour, targetNode);
+                    neighbour.Parent = currentNode;
+
+                    if (!openSet.Contains(neighbour))
+                    {
+                        openSet.Add(neighbour);
+                    }
+                }
+            }
+        }
+
+        return path;
+    }
+
+    private int GetDistance(GridNode nodeA, GridNode nodeB)
+    {
+        int dstX = Mathf.Abs(Mathf.FloorToInt(nodeA.GridPos.x - nodeB.GridPos.x));
+        int dstY = Mathf.Abs(Mathf.FloorToInt(nodeA.GridPos.y - nodeB.GridPos.y));
+
+        if (dstX > dstY)
+        {
+            return 14 * dstY + 10 * (dstX - dstY);
+        }
+        return 14 * dstX + 10 * (dstY - dstX);
     }
 
 
+    private List<GridNode> RetracePath(GridNode startNode, GridNode endNode)
+    {
+        List<GridNode> path = new List<GridNode>();
+        GridNode currentNode = endNode;
 
+        while (currentNode != startNode)
+        {
+            path.Add(currentNode);
+            currentNode = currentNode.Parent;
+        }
+        path.Reverse();
 
-    /// <summary>
-    /// Bu fonksiyon ile grid oluþturabilirsiniz!
-    /// </summary>
+        return path;
+    }
+
+    private Direction GetNextDirection(GridNode currentNode, GridNode targetNode)
+    {
+        if (Mathf.Abs(targetNode.GridPos.x - currentNode.GridPos.x) > Mathf.Abs(targetNode.GridPos.y - currentNode.GridPos.y))
+        {
+            if (targetNode.GridPos.x > currentNode.GridPos.x)
+            {
+                return Direction.Right;
+            }
+            else
+            {
+                return Direction.Left;
+            }
+        }
+        else
+        {
+            if (targetNode.GridPos.y > currentNode.GridPos.y)
+            {
+                return Direction.Forward;
+            }
+            else
+            {
+                return Direction.Backward;
+            }
+        }
+    }
+
+    private GridNode FindValidNeighbour(GridNode currentNode, GridNode targetNode)
+    {
+        Direction[] directions = { Direction.Forward, Direction.Backward, Direction.Left, Direction.Right };
+
+        foreach (Direction direction in directions)
+        {
+            GridNode neighbour = GetNeighbour(currentNode, direction);
+            if (neighbour != null && neighbour.GridIsActive)
+            {
+                return neighbour;
+            }
+        }
+
+        return null;
+    }
+
+    public GridNode GetNeighbour(GridNode currentNode, Direction direction)
+    {
+        Vector2 gridDistance = new Vector2(Grid.Instance.GetGridDistance, Grid.Instance.GetGridDistance);
+
+        switch (direction)
+        {
+            case Direction.Forward:
+                return FindGridNodeForVector(new Vector3(currentNode.GridPos.x, 0, currentNode.GridPos.y + gridDistance.y));
+            case Direction.Backward:
+                return FindGridNodeForVector(new Vector3(currentNode.GridPos.x, 0, currentNode.GridPos.y - gridDistance.y));
+            case Direction.Left:
+                return FindGridNodeForVector(new Vector3(currentNode.GridPos.x - gridDistance.x, 0, currentNode.GridPos.y));
+            case Direction.Right:
+                return FindGridNodeForVector(new Vector3(currentNode.GridPos.x + gridDistance.x, 0, currentNode.GridPos.y));
+            case Direction.ForwardRight:
+                return FindGridNodeForVector(new Vector3(currentNode.GridPos.x + gridDistance.x, 0, currentNode.GridPos.y + gridDistance.y));
+            case Direction.ForwardLeft:
+                return FindGridNodeForVector(new Vector3(currentNode.GridPos.x - gridDistance.x, 0, currentNode.GridPos.y + gridDistance.y));
+            case Direction.BackwardRight:
+                return FindGridNodeForVector(new Vector3(currentNode.GridPos.x + gridDistance.x, 0, currentNode.GridPos.y - gridDistance.y));
+            case Direction.BackwardLeft:
+                return FindGridNodeForVector(new Vector3(currentNode.GridPos.x - gridDistance.x, 0, currentNode.GridPos.y - gridDistance.y));
+            default:
+                return null;
+        }
+    }
+
     public void CreateGrid()
     {
         Grid.Instance.SetGridValues(this.gridProperties.GridAmount, this.gridProperties.GridDistance, this.gridProperties.GizmosColor, this.gridProperties.GizmosSize);
@@ -140,55 +284,34 @@ public class GridManager : MonoBehaviour
                 grids[_index] = new GridNode
                 {
                     GridPos = position,
-                    GridIsActive = true
+                    GridIsActive = true,
+                    Index = _index
                 };
                 _index++;
             }
         }
         AlignPlaneWithGrid();
-
 #if UNITY_EDITOR
-        CameraController.ChangeCameraPos(GridCenterPos(), 20);
+        CameraController.ChangeCameraPos(GridCenterPos(), Grid.Instance.GetGridAmount.x * Grid.Instance.GetGridDistance);
 #endif
     }
 
-
-    /// <summary>
-    /// Bu fonksiyon ile oluþturduðunuz gridleri temizleyebilirsiniz!
-    /// </summary>
     public void ClearGrid()
     {
         this.grids = null;
     }
 
-
-
-
-
-
-
-
-    /// <summary>
-    /// Bu fonksiyon ile birlikte grid objesinin konumunu tam olarak hizlayabilirsiniz!
-    /// </summary>
     private void AlignPlaneWithGrid()
     {
         if (planeObject == null) return;
 
-        // Gridin toplam geniþliði ve yüksekliði
         float totalWidth = Grid.Instance.GetGridAmount.x * Grid.Instance.GetGridDistance;
         float totalHeight = Grid.Instance.GetGridAmount.y * Grid.Instance.GetGridDistance;
 
-        // Plane objesinin pozisyonu ve ölçeði
         planeObject.transform.position = new Vector3(totalWidth / 2, 0, totalHeight / 2);
         planeObject.transform.localScale = new Vector3(totalWidth / 10, 1, totalHeight / 10);
     }
 
-
-    /// <summary>
-    /// Bu fonksiyon ile birlikte Gridin tam orta noktasýný çekebilirsiniz!
-    /// </summary>
-    /// <returns>Gridin tam olarak orta noktasý geri dönderilecektir!</returns>
     private Vector3 GridCenterPos()
     {
         float totalWidth = Grid.Instance.GetGridAmount.x * Grid.Instance.GetGridDistance;
@@ -196,4 +319,21 @@ public class GridManager : MonoBehaviour
 
         return new Vector3(totalWidth / 2.0f, 0, totalHeight / 2);
     }
+
+    public float GetRotationSpeed()
+    {
+        return rotationSpeed;
+    }
+}
+
+public enum Direction
+{
+    Forward,
+    Backward,
+    Left,
+    Right,
+    ForwardRight,
+    ForwardLeft,
+    BackwardRight,
+    BackwardLeft
 }
