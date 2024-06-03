@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     private LineRenderer lineRenderer;
     private float originalSpeed = 5f;
     private float currentSpeed;
+    private Animator animator;
+    private bool isMoving;
 
     private void Awake()
     {
@@ -23,6 +25,9 @@ public class PlayerController : MonoBehaviour
             lineRenderer = gameObject.AddComponent<LineRenderer>();
         }
 
+        // Animator bileþenini bulun
+        animator = GetComponent<Animator>();
+
         // LineRenderer ayarlarý
         lineRenderer.startWidth = 0.1f;
         lineRenderer.endWidth = 0.1f;
@@ -32,12 +37,16 @@ public class PlayerController : MonoBehaviour
         lineRenderer.positionCount = 0; // Baþlangýçta hiç segment yok
 
         currentSpeed = originalSpeed; // Baþlangýç hýzý
+        isMoving = false;
     }
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
+#if UNITY_EDITOR
+            UnityEngine.Profiling.Profiler.BeginSample("Player Interaction");
+#endif
             GridNode targetNode = InteractionGridNode();
             if (targetNode != null)
             {
@@ -46,9 +55,13 @@ public class PlayerController : MonoBehaviour
                 pathIndex = 0;
                 DrawPath();
             }
+#if UNITY_EDITOR
+            UnityEngine.Profiling.Profiler.EndSample();
+#endif
         }
 
         MoveAlongPath();
+        UpdateAnimator();
     }
 
     private GridNode InteractionGridNode()
@@ -77,7 +90,12 @@ public class PlayerController : MonoBehaviour
             {
                 RotateTowards(targetPosition);
                 this.transform.position = Vector3.MoveTowards(this.transform.position, targetPosition, Time.deltaTime * currentSpeed);
+                isMoving = true;
             }
+        }
+        else
+        {
+            isMoving = false;
         }
     }
 
@@ -107,6 +125,22 @@ public class PlayerController : MonoBehaviour
         for (int i = 0; i < path.Count; i++)
         {
             lineRenderer.SetPosition(i, new Vector3(path[i].GridPos.x, 0.1f, path[i].GridPos.y));
+        }
+    }
+
+    private void UpdateAnimator()
+    {
+        if (animator != null)
+        {
+            if (isMoving)
+            {
+                float blendValue = Mathf.Clamp(currentSpeed / originalSpeed, 0.0f, 0.3f); // Hareket hýzýna göre blend parametresi
+                animator.SetFloat("Blend", blendValue);
+            }
+            else
+            {
+                animator.SetFloat("Blend", 0f); // Karakter durduðunda blend 0
+            }
         }
     }
 }
