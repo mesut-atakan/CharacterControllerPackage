@@ -73,3 +73,7 @@ Koordinatlar grid sınırları içindeyse, karşılık gelen GridNode'u döndür
 
 # PlayerController
 `PlayerController` sınıfı, GridManager tarafından bulunan yol boyunca oyuncunun hareketini ve Animator bileşenini günceller.
+
+# Assets
+
+https://assetstore.unity.com/packages/3d/characters/jammo-character-mix-and-jam-158456
