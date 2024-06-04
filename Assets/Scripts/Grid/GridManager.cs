@@ -18,17 +18,30 @@ public class GridManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private float rotationSpeed = 5f;
+    [SerializeField] private int surroundingGridRadius = 1; // Çevredeki grid sayýsý
+
+
     #endregion <<<< Serialize Fields >>>>
+
+
+
+
+    #region <<<< Properties >>>>
+
+    internal GridNode[] Grids { get => this.grids; }
+    internal int SurroundingGridRadius => surroundingGridRadius; // Yeni çevre grid birimi özelliði
+
+    #endregion <<<< XXX >>>>
 
     private void Awake()
     {
         Grid.Instance.SetGridValues(this.gridProperties.GridAmount, this.gridProperties.GridDistance, this.gridProperties.GizmosColor, this.gridProperties.GizmosSize);
+        Grid.Instance.DataDebug();
+        CreateGrid();
     }
 
     private void Start()
     {
-        Grid.Instance.DataDebug();
-        CreateGrid();
     }
 
     private void OnDrawGizmos()
@@ -50,6 +63,35 @@ public class GridManager : MonoBehaviour
             }
         }
     }
+
+
+
+    public List<GridNode> GetSurroundingGrids(GridNode centerNode)
+{
+    List<GridNode> surroundingNodes = new List<GridNode>();
+
+    int gridAmountX = (int)Grid.Instance.GetGridAmount.x;
+    int gridAmountY = (int)Grid.Instance.GetGridAmount.y;
+    float gridDistance = Grid.Instance.GetGridDistance;
+
+    for (int x = -surroundingGridRadius; x <= surroundingGridRadius; x++)
+    {
+        for (int y = -surroundingGridRadius; y <= surroundingGridRadius; y++)
+        {
+            if (x == 0 && y == 0)
+                continue;
+
+            Vector2 checkPos = new Vector2(centerNode.GridPos.x + x * gridDistance, centerNode.GridPos.y + y * gridDistance);
+            GridNode node = FindGridNodeForVector(new Vector3(checkPos.x, 0, checkPos.y));
+            if (node != null && node.GridIsActive)
+            {
+                surroundingNodes.Add(node);
+            }
+        }
+    }
+
+    return surroundingNodes;
+}
 
     public GridNode FindGridNodeForVector(Vector3 position)
     {

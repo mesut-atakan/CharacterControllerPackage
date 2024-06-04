@@ -70,3 +70,100 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+Assets/Jammo-Character.meta
+Assets/Jammo-Character/Animations.meta
+Assets/Jammo-Character/Files.meta
+Assets/Jammo-Character/Materials.meta
+Assets/Jammo-Character/Models.meta
+Assets/Jammo-Character/Prefabs.meta
+Assets/Jammo-Character/Scenes.meta
+Assets/Jammo-Character/Scripts.meta
+Assets/Jammo-Character/Textures.meta
+Assets/Jammo-Character/Animations/AnimatorController_Jamo.controller
+Assets/Jammo-Character/Animations/AnimatorController_Jamo.controller.meta
+Assets/Jammo-Character/Animations/Default.meta
+Assets/Jammo-Character/Animations/Falling To Landing.anim
+Assets/Jammo-Character/Animations/Falling To Landing.anim.meta
+Assets/Jammo-Character/Animations/Fist Pump.anim
+Assets/Jammo-Character/Animations/Fist Pump.anim.meta
+Assets/Jammo-Character/Animations/Jump.anim
+Assets/Jammo-Character/Animations/Jump.anim.meta
+Assets/Jammo-Character/Animations/Standing.anim
+Assets/Jammo-Character/Animations/Standing.anim.meta
+Assets/Jammo-Character/Animations/Victory Idle.anim
+Assets/Jammo-Character/Animations/Victory Idle.anim.meta
+Assets/Jammo-Character/Animations/Default/a_Idle.anim
+Assets/Jammo-Character/Animations/Default/a_Idle.anim.meta
+Assets/Jammo-Character/Animations/Default/a_Idle_Battle.anim
+Assets/Jammo-Character/Animations/Default/a_Idle_Battle.anim.meta
+Assets/Jammo-Character/Animations/Default/a_Idle_Happy.anim
+Assets/Jammo-Character/Animations/Default/a_Idle_Happy.anim.meta
+Assets/Jammo-Character/Animations/Default/a_Idle_Relaxed.anim
+Assets/Jammo-Character/Animations/Default/a_Idle_Relaxed.anim.meta
+Assets/Jammo-Character/Animations/Default/a_Idle_Scared.anim
+Assets/Jammo-Character/Animations/Default/a_Idle_Scared.anim.meta
+Assets/Jammo-Character/Animations/Default/a_Running.anim
+Assets/Jammo-Character/Animations/Default/a_Running.anim.meta
+Assets/Jammo-Character/Animations/Default/a_Walking.anim
+Assets/Jammo-Character/Animations/Default/a_Walking.anim.meta
+Assets/Jammo-Character/Files/eyes_vector.ai
+Assets/Jammo-Character/Files/eyes_vector.ai.meta
+Assets/Jammo-Character/Materials/m_ground.mat
+Assets/Jammo-Character/Materials/m_ground.mat.meta
+Assets/Jammo-Character/Materials/m_jammo_eyes.mat
+Assets/Jammo-Character/Materials/m_jammo_eyes.mat.meta
+Assets/Jammo-Character/Materials/m_jammo_metal.mat
+Assets/Jammo-Character/Materials/m_jammo_metal.mat.meta
+Assets/Jammo-Character/Materials/Skybox.mat
+Assets/Jammo-Character/Materials/Skybox.mat.meta
+Assets/Jammo-Character/Models/Jammo_LowPoly.fbx
+Assets/Jammo-Character/Models/Jammo_LowPoly.fbx.meta
+Assets/Jammo-Character/Prefabs/Jammo_Player.prefab
+Assets/Jammo-Character/Prefabs/Jammo_Player.prefab.meta
+Assets/Jammo-Character/Scenes/JammoScene.meta
+Assets/Jammo-Character/Scenes/JammoScene.unity
+Assets/Jammo-Character/Scenes/JammoScene.unity.meta
+Assets/Jammo-Character/Scenes/JammoScene_Profiles.meta
+Assets/Jammo-Character/Scenes/JammoScene/LightingData.asset
+Assets/Jammo-Character/Scenes/JammoScene/LightingData.asset.meta
+Assets/Jammo-Character/Scenes/JammoScene/Lightmap-0_comp_dir.png
+Assets/Jammo-Character/Scenes/JammoScene/Lightmap-0_comp_dir.png.meta
+Assets/Jammo-Character/Scenes/JammoScene/Lightmap-0_comp_light.exr
+Assets/Jammo-Character/Scenes/JammoScene/Lightmap-0_comp_light.exr.meta
+Assets/Jammo-Character/Scenes/JammoScene/Lightmap-0_comp_shadowmask.png
+Assets/Jammo-Character/Scenes/JammoScene/Lightmap-0_comp_shadowmask.png.meta
+Assets/Jammo-Character/Scenes/JammoScene/Lightmap-1_comp_dir.png
+Assets/Jammo-Character/Scenes/JammoScene/Lightmap-1_comp_dir.png.meta
+Assets/Jammo-Character/Scenes/JammoScene/Lightmap-1_comp_light.exr
+Assets/Jammo-Character/Scenes/JammoScene/Lightmap-1_comp_light.exr.meta
+Assets/Jammo-Character/Scenes/JammoScene/Lightmap-1_comp_shadowmask.png
+Assets/Jammo-Character/Scenes/JammoScene/Lightmap-1_comp_shadowmask.png.meta
+Assets/Jammo-Character/Scenes/JammoScene/ReflectionProbe-0.exr
+Assets/Jammo-Character/Scenes/JammoScene/ReflectionProbe-0.exr.meta
+Assets/Jammo-Character/Scenes/JammoScene/ReflectionProbe-1.exr
+Assets/Jammo-Character/Scenes/JammoScene/ReflectionProbe-1.exr.meta
+Assets/Jammo-Character/Scenes/JammoScene_Profiles/GameObject Profile.asset
+Assets/Jammo-Character/Scenes/JammoScene_Profiles/GameObject Profile.asset.meta
+Assets/Jammo-Character/Scripts/CharacterSkinController.cs
+Assets/Jammo-Character/Scripts/CharacterSkinController.cs.meta
+Assets/Jammo-Character/Scripts/MovementInput.cs
+Assets/Jammo-Character/Scripts/MovementInput.cs.meta
+Assets/Jammo-Character/Textures/Alternates.meta
+Assets/Jammo-Character/Textures/jammo_eyes.png
+Assets/Jammo-Character/Textures/jammo_eyes.png.meta
+Assets/Jammo-Character/Textures/mixbot_low_mixamo_edit1_AlbedoTransparency.png
+Assets/Jammo-Character/Textures/mixbot_low_mixamo_edit1_AlbedoTransparency.png.meta
+Assets/Jammo-Character/Textures/mixbot_low_mixamo_edit1_AO.png
+Assets/Jammo-Character/Textures/mixbot_low_mixamo_edit1_AO.png.meta
+Assets/Jammo-Character/Textures/mixbot_low_mixamo_edit1_MetallicSmoothness.png
+Assets/Jammo-Character/Textures/mixbot_low_mixamo_edit1_MetallicSmoothness.png.meta
+Assets/Jammo-Character/Textures/mixbot_low_mixamo_edit1_Normal.png
+Assets/Jammo-Character/Textures/mixbot_low_mixamo_edit1_Normal.png.meta
+Assets/Jammo-Character/Textures/mixbot1.json
+Assets/Jammo-Character/Textures/mixbot1.json.meta
+Assets/Jammo-Character/Textures/Alternates/t_jammo_black.psd
+Assets/Jammo-Character/Textures/Alternates/t_jammo_black.psd.meta
+Assets/Jammo-Character/Textures/Alternates/t_jammo_blue.psd
+Assets/Jammo-Character/Textures/Alternates/t_jammo_blue.psd.meta
+Assets/Jammo-Character/Textures/Alternates/t_jammo_yellow.psd
+Assets/Jammo-Character/Textures/Alternates/t_jammo_yellow.psd.meta
